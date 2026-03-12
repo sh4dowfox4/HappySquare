@@ -4,8 +4,8 @@
 const int screenWidth = 1920;
 const int screenHeight = 1080;
 
-const int worldWidth = 50000;
-const int worldHeight = 50000;
+const int worldWidth = 5000;
+const int worldHeight = 5000;
 
 const int fps = 180;
 
@@ -17,6 +17,7 @@ int main(void) {
 	//SetWindowState(FLAG_FULLSCREEN_MODE);
 
 	SetTargetFPS(fps);
+	
 
 	Vector2 ballPos = { worldWidth / 2, worldHeight / 2 };
 	const float ballSpeed = 1000.f;
@@ -61,14 +62,12 @@ int main(void) {
 
 		BeginDrawing();
 			ClearBackground(BLACK);
-	//		int Fps = GetFPS();
-	//		DrawText(TextFormat("FrameTime:%f\tFPS: %i", frameTime, Fps), 20, 10, 25, BLUE);
 			DrawText(TextFormat("x: %i, y: %i", (int)ballPos.x, (int)ballPos.y), 20, 50, 30, GREEN);
 			DrawText(TextFormat("camera.zoom: %f\ntargetZoom: %f", camera.zoom, targetZoom), 20, 90, 30, GREEN);
 			DrawText(TextFormat("World size: %ix%i\nResolution: %ix%i",
 					worldWidth, worldHeight, screenWidth,screenHeight),
 				   	20, screenHeight-100, 25, YELLOW);
-			
+
 			BeginMode2D(camera);
 				DrawCircleV(ballPos, float(ballRadius), RED);
 
@@ -80,6 +79,7 @@ int main(void) {
         		}
 				DrawRectangleLines (0, 0, worldWidth, worldHeight, WHITE);
 			EndMode2D();
+
 		EndDrawing();
 	}
 	CloseWindow();
