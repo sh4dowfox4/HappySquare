@@ -71,7 +71,7 @@ void Enemy::attack(Player& player) {
 
 void Enemy::draw() const {
     // Меняем цвет в зависимости от состояния
-    Color drawColor = (state == State::ALERTED) ? COLOR_RED : MAROON;
+    Color drawColor = (state == State::ALERTED) ? RED : MAROON;
     DrawRectangle(pos.x, pos.y, width, height, drawColor);
     
     // Полоска здоровья
@@ -84,6 +84,6 @@ void Enemy::draw() const {
     
     // Большой радиус (красный, только если злой)
     if (state == State::ALERTED) {
-        DrawCircleLines(pos.x + width/2, pos.y + height/2, chaseRadius, COLOR_RED);
+        DrawCircleLines(pos.x + width/2, pos.y + height/2, chaseRadius, RED);
     }
 }
