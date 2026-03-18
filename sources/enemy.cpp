@@ -2,8 +2,9 @@
 #include "player.h"
 
 Enemy::Enemy(Vector2 p, float w, float h, int hp, int dmg, float spd, 
-             float alertRad, float chaseRad, Behavior beh)
-    : Entity(p, w, h, hp, MAROON) {
+	float alertRad, float chaseRad, Behavior beh)
+	: Entity(p, w, h, hp, MAROON) {
+
     damage = dmg;
     speed = spd;
     attackCD = 1.f;
@@ -20,7 +21,8 @@ bool Enemy::canDetectPlayer(const Player& player) const {
     if (state == State::ALERTED) {
         // Если уже злой — видит дальше (chaseRadius)
         return distance <= chaseRadius;
-    } else {
+    }
+	else {
         // Если спокоен — видит только вблизи (alertRadius)
         return distance <= alertRadius;
     }
@@ -40,7 +42,8 @@ void Enemy::update(float deltaTime, const Player& player) {
             case Behavior::IDLE:
                 break;
         }
-    } else {
+    }
+	else {
         // Если игрок ушёл далеко, враг успокаивается
         state = State::IDLE;
     }
@@ -78,11 +81,10 @@ void Enemy::draw() const {
     float hpPercent = (float)health / maxHealth;
     DrawRectangle(pos.x, pos.y - 8, width * hpPercent, 4, GREEN);
     
-    // --- ОТЛАДКА: Рисуем радиусы ---
     // Малый радиус (белый)
     DrawCircleLines(pos.x + width/2, pos.y + height/2, alertRadius, WHITE);
     
-    // Большой радиус (красный, только если злой)
+    // Большой радиус (красный)
     if (state == State::ALERTED) {
         DrawCircleLines(pos.x + width/2, pos.y + height/2, chaseRadius, RED);
     }

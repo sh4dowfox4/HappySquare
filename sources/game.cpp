@@ -24,7 +24,7 @@ settingsOpenedFromGame(false) {
     targetZoom = 1.0f;
     zoomSpeed = 5.0f;
 
-    // Пресеты (без 2K, только English названия)
+    resolutions.push_back({"80 x 1000 (Window)", 80, 1000, false});
     resolutions.push_back({"1280 x 720 (Window)", 1280, 720, false});
     resolutions.push_back({"1920 x 1080 (Window)", 1920, 1080, false});
     resolutions.push_back({"Native Fullscreen", 0, 0, true});
@@ -37,7 +37,9 @@ void Game::detectMonitors() {}
 
 void Game::applyResolution(int resIndex, int monitorIndex) {
     if (resIndex < 0 || resIndex >= resolutions.size()) return;
+
     ResolutionPreset res = resolutions[resIndex];
+
     int maxMonitors = GetMonitorCount();
     if (monitorIndex >= maxMonitors) monitorIndex = 0;
     if (monitorIndex < 0) monitorIndex = 0;
@@ -45,19 +47,25 @@ void Game::applyResolution(int resIndex, int monitorIndex) {
     if (res.isFullscreen) {
         int monWidth = GetMonitorWidth(monitorIndex);
         int monHeight = GetMonitorHeight(monitorIndex);
+
         Vector2 monPos = GetMonitorPosition(monitorIndex);
         SetWindowPosition((int)monPos.x, (int)monPos.y);
+
         if (!IsWindowFullscreen()) ToggleFullscreen();
         SetWindowSize(monWidth, monHeight);
         camera.offset = { (float)monWidth / 2.0f, (float)monHeight / 2.0f };
-    } else {
+    }
+	else {
         if (IsWindowFullscreen()) ToggleFullscreen();
+
         SetWindowSize(res.width, res.height);
         Vector2 monPos = GetMonitorPosition(monitorIndex);
+
         int monWidth = GetMonitorWidth(monitorIndex);
         int monHeight = GetMonitorHeight(monitorIndex);
         int xPos = (int)monPos.x + (monWidth - res.width) / 2;
         int yPos = (int)monPos.y + (monHeight - res.height) / 2;
+
         SetWindowPosition(xPos, yPos);
         camera.offset = { (float)res.width / 2.0f, (float)res.height / 2.0f };
     }
@@ -73,14 +81,13 @@ void Game::run() {
 }
 
 void Game::update(float deltaTime) {
-    // ESC работает глобально для выхода из настроек или паузы
     if (IsKeyPressed(KEY_ESCAPE)) {
         if (currentState == GameState::SETTINGS) {
             currentState = previousState;
             return;
         }
         if (currentState == GameState::PAUSED) {
-            currentState = GameState::PLAYING; // Быстрое возобновление по ESC
+            currentState = GameState::PLAYING;
             return;
         }
     }
@@ -89,7 +96,7 @@ void Game::update(float deltaTime) {
         case GameState::MENU: updateMenu(deltaTime); break;
         case GameState::SETTINGS: updateSettings(deltaTime); break;
         case GameState::PLAYING: updateGameplay(deltaTime); break;
-        case GameState::PAUSED: updatePaused(deltaTime); break; // Обновляем только ввод, не игру
+        case GameState::PAUSED: updatePaused(deltaTime); break; 
         case GameState::EXIT: isRunning = false; break;
     }
 }
@@ -102,20 +109,15 @@ void Game::draw() {
         case GameState::MENU: drawMenu(); break;
         case GameState::SETTINGS: drawSettings(); break;
         case GameState::PLAYING: drawGameplay(); break;
-        case GameState::PAUSED:
-            drawGameplay(); // Рисуем игру на фоне
-            drawPaused();   // Рисуем меню паузы сверху
-            break;
+        case GameState::PAUSED: drawGameplay(); drawPaused(); break;
         default: break;
     }
-
     EndDrawing();
 }
 
 // ================= ИГРОВОЙ ПРОЦЕСС =================
 
 void Game::updateGameplay(float deltaTime) {
-    // Нажатие ESC переводит в ПАУЗУ
     if (IsKeyPressed(KEY_ESCAPE)) {
         previousState = GameState::PLAYING;
         currentState = GameState::PAUSED;
@@ -143,6 +145,7 @@ void Game::updateGameplay(float deltaTime) {
     player.shoot(bullets, camera);
 
     for (auto& bullet : bullets) bullet.update(deltaTime);
+
     for (auto& enemy : enemies) {
         enemy.update(deltaTime, player);
         enemy.attack(player);
@@ -152,10 +155,11 @@ void Game::updateGameplay(float deltaTime) {
     cleanUp();
 
     if (!player.isAlive()) {
-        // Game Over -> сразу в главное меню
         previousState = GameState::PLAYING;
         currentState = GameState::MENU;
+
         score = 0; wave = 1; enemySpawnInterval = 2.0f;
+
         player = Player(Vector2{WORLD_WIDTH / 2.0f, WORLD_HEIGHT / 2.0f});
         enemies.clear(); bullets.clear();
         camera.target = player.getPosition();
@@ -165,6 +169,7 @@ void Game::updateGameplay(float deltaTime) {
 void Game::drawGameplay() {
     BeginMode2D(camera);
     DrawRectangleLines(0, 0, WORLD_WIDTH, WORLD_HEIGHT, COLOR_WHITE);
+
     for (int x = 0; x <= WORLD_WIDTH; x += 100) DrawLine(x, 0, x, WORLD_HEIGHT, COLOR_DARKGRAY);
     for (int y = 0; y <= WORLD_HEIGHT; y += 100) DrawLine(0, y, WORLD_WIDTH, y, COLOR_DARKGRAY);
 
@@ -197,15 +202,16 @@ void Game::drawGameplay() {
     }
 }
 
-// ... (Функции checkCollision, spawnEnemy, cleanUp без изменений) ...
 void Game::checkCollision() {
     for (auto& bullet : bullets) {
         if (!bullet.getIsActive()) continue;
+
         for (auto& enemy : enemies) {
             if (!enemy.getIsActive()) continue;
             if (bullet.checkCollision(enemy)) {
                 enemy.takeDamage(bullet.getDamage());
                 bullet.setIsActive(false);
+
                 if (!enemy.getIsActive()) score += 10;
                 break;
             }
@@ -217,10 +223,12 @@ void Game::spawnEnemy() {
     if (enemies.size() >= MAX_ENEMIES) return;
     float x = (float)GetRandomValue(0, WORLD_WIDTH - 32);
     float y = (float)GetRandomValue(0, WORLD_HEIGHT - 32);
-    Vector2 pos = {x, y};
+	Vector2 pos = {x, y};
+
     int hp = 20 + (wave * 5);
     int dmg = 5 + wave;
     float spd = 50.f + (wave * 5);
+
     enemies.emplace_back(pos, 32, 32, hp, dmg, spd, 250.0f, 600.0f, Enemy::Behavior::CHASE);
     if (score >= wave * 100) {
         wave++;
@@ -337,6 +345,7 @@ void Game::drawPaused() {
 void Game::updateSettings(float deltaTime) {
     int sw = GetScreenWidth();
     Rectangle btnBack = { (float)sw/2 - 100, 650, 200, 50 };
+
     bool hoverBack = CheckCollisionPointRec(GetMousePosition(), btnBack);
 
     if (hoverBack && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -352,6 +361,7 @@ void Game::updateSettings(float deltaTime) {
     }
 
     int monitorCount = GetMonitorCount();
+
     Rectangle rectMon = { (float)sw/2 - 150, 220, 300, 40 };
     if (monitorCount > 1) {
         if (CheckCollisionPointRec(GetMousePosition(), rectMon) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -378,6 +388,7 @@ void Game::drawSettings() {
     DrawText("Resolution:", sw/2 - 150, 120, 20, WHITE);
     const char* resName = resolutions[currentResIndex].name;
     Rectangle rectRes = { (float)sw/2 - 150, 150, 300, 40 };
+
     bool hoverRes = CheckCollisionPointRec(GetMousePosition(), rectRes);
     DrawRectangleLinesEx(rectRes, 2, hoverRes ? WHITE : BLUE);
     DrawText(resName, rectRes.x + (rectRes.width - MeasureText(resName, 20))/2, rectRes.y + 10, 20, hoverRes ? WHITE : BLUE);
@@ -385,9 +396,11 @@ void Game::drawSettings() {
     int monitorCount = GetMonitorCount();
     if (monitorCount > 1) {
         DrawText("Monitor:", sw/2 - 150, 190, 20, WHITE);
+
         const char* monName = TextFormat("Monitor %d", currentMonitorIndex + 1);
         Rectangle rectMon = { (float)sw/2 - 150, 220, 300, 40 };
         bool hoverMon = CheckCollisionPointRec(GetMousePosition(), rectMon);
+
         DrawRectangleLinesEx(rectMon, 2, hoverMon ? WHITE : BLUE);
         DrawText(monName, rectMon.x + (rectMon.width - MeasureText(monName, 20))/2, rectMon.y + 10, 20, hoverMon ? WHITE : BLUE);
     }
@@ -412,9 +425,11 @@ void Game::drawSlider(Rectangle rec, float value, const char* label) {
 
 void Game::drawNeonButton(Rectangle rec, const char* text, bool isHovered, Color baseColor) {
     Color drawColor = isHovered ? WHITE : baseColor;
+
     if (isHovered) {
         DrawRectangleRec((Rectangle){rec.x-2, rec.y-2, rec.width+4, rec.height+4}, Fade(baseColor, 0.3f));
     }
+
     DrawRectangleLinesEx(rec, 2, drawColor);
     int textWidth = MeasureText(text, 20);
     DrawText(text, rec.x + (rec.width - textWidth)/2, rec.y + 15, 20, drawColor);

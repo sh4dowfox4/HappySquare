@@ -12,7 +12,7 @@ enum class GameState {
     MENU,
     SETTINGS,
     PLAYING,
-    PAUSED,      // Новое состояние паузы
+    PAUSED,
     EXIT
 };
 
@@ -67,8 +67,8 @@ public:
     void updateMenu(float deltaTime);
     void drawMenu();
 
-    void updatePaused(float deltaTime); // Логика паузы
-    void drawPaused();                  // Отрисовка паузы
+    void updatePaused(float deltaTime); 
+    void drawPaused();
 
     void updateSettings(float deltaTime);
     void drawSettings();

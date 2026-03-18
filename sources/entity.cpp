@@ -3,9 +3,7 @@
 Entity::Entity(Vector2 p, float w, float h, int hp, Color c)
     : pos(p), width(w), height(h), health(hp), maxHealth(hp), color(c), isActive(true) {}
 
-void Entity::update(float deltaTime) {
-    // Базовая реализация пустая
-}
+void Entity::update(float deltaTime) {}
 
 void Entity::draw() const {
     DrawRectangle(pos.x, pos.y, width, height, color);

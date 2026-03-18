@@ -8,14 +8,13 @@
 #include <algorithm>
 #include <string>
 
-// Размеры экрана
 constexpr int SCREEN_WIDTH = 1200;
 constexpr int SCREEN_HEIGHT = 800;
-constexpr int TARGET_FPS = 180;
+constexpr int TARGET_FPS = 60;
 
 // Размеры игрового мира
-constexpr int WORLD_WIDTH = 5000;
-constexpr int WORLD_HEIGHT = 5000;
+constexpr int WORLD_WIDTH = 7000;
+constexpr int WORLD_HEIGHT = 7000;
 
 // Цвета (алиасы для удобства)
 constexpr Color COLOR_GREEN = GREEN;

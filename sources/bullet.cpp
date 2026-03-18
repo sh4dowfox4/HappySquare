@@ -7,7 +7,8 @@ Bullet::Bullet(Vector2 p, Vector2 dir, float speed, int dmg, float life)
     if (length > 0) {
         velocity.x = (dir.x / length) * speed;
         velocity.y = (dir.y / length) * speed;
-    } else {
+    }
+	else {
         velocity = {0, 0};
     }
 }
@@ -16,6 +17,7 @@ void Bullet::update(float deltaTime) {
     pos.x += velocity.x * deltaTime;
     pos.y += velocity.y * deltaTime;
     lifetime -= deltaTime;
+
     if (lifetime <= 0) setIsActive(false);
 }
 

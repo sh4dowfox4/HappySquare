@@ -2,7 +2,7 @@
 #define PLAYER_H
 
 #include "entity.h"
-#include "bullet.h" // Нужно для std::vector<Bullet>&
+#include "bullet.h"
 
 class Player : public Entity {
 private:
