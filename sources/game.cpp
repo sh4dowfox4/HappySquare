@@ -24,7 +24,6 @@ settingsOpenedFromGame(false) {
     targetZoom = 1.0f;
     zoomSpeed = 5.0f;
 
-    resolutions.push_back({"80 x 1000 (Window)", 80, 1000, false});
     resolutions.push_back({"1280 x 720 (Window)", 1280, 720, false});
     resolutions.push_back({"1920 x 1080 (Window)", 1920, 1080, false});
     resolutions.push_back({"Native Fullscreen", 0, 0, true});
@@ -39,8 +38,8 @@ void Game::applyResolution(int resIndex, int monitorIndex) {
     if (resIndex < 0 || resIndex >= resolutions.size()) return;
 
     ResolutionPreset res = resolutions[resIndex];
+	int maxMonitors = GetMonitorCount();
 
-    int maxMonitors = GetMonitorCount();
     if (monitorIndex >= maxMonitors) monitorIndex = 0;
     if (monitorIndex < 0) monitorIndex = 0;
 
