@@ -7,7 +7,8 @@
 
 constexpr int MAX_ENEMIES = 50;
 
-enum class GameState { MENU, SETTINGS, PLAYING, PAUSED, EXIT };
+// Добавлено состояние GAMEOVER
+enum class GameState { MENU, SETTINGS, PLAYING, PAUSED, GAMEOVER, EXIT };
 
 struct ResolutionPreset {
     const char* name;
@@ -37,7 +38,6 @@ private:
     int currentResIndex;
     int currentMonitorIndex;
     bool debugMode;
-
     float musicVolume;
     float sfxVolume;
     Music musicMenu;
@@ -49,10 +49,11 @@ private:
     Sound sfxReload;
     Sound sfxEnemyShoot;
     bool audioInitialized;
-
     std::vector<ResolutionPreset> resolutions;
     int hoveredButton;
     bool settingsOpenedFromGame;
+    Texture2D menuLogoTexture;
+    bool logoLoaded;
 
     void initAudio();
     void updateAudio();
@@ -66,6 +67,10 @@ private:
     void playEnemyShoot();
     void loadHighScore();
     void saveHighScore();
+
+    // Новые функции для экрана проигрыша
+    void updateGameOver(float deltaTime);
+    void drawGameOver();
 
 public:
     Game();
@@ -92,5 +97,4 @@ public:
 };
 
 extern bool g_debugMode;
-
 #endif // GAME_H
