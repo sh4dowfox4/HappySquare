@@ -1,5 +1,6 @@
 #ifndef ENEMY_H
 #define ENEMY_H
+
 #include "entity.h"
 #include "bullet.h"
 
@@ -20,7 +21,6 @@ private:
     float chaseRadius;
     State state;
 
-    // Стрельба для дальников
     int magazineSize;
     int currentAmmo;
     float shootCD;
@@ -36,6 +36,7 @@ public:
 
     void update(float deltaTime, const Player& player);
     void draw() const override;
+
     bool canDetectPlayer(const Player& player) const;
     void chasePlayer(const Player& player, float deltaTime);
     bool attack(Player& player);
@@ -47,4 +48,5 @@ public:
     float getAlertRadius() const { return alertRadius; }
     float getChaseRadius() const { return chaseRadius; }
 };
+
 #endif // ENEMY_H

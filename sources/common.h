@@ -1,5 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
+
 #include "raylib.h"
 #include "raymath.h"
 #include <vector>
@@ -11,10 +12,9 @@
 constexpr int SCREEN_WIDTH = 1200;
 constexpr int SCREEN_HEIGHT = 800;
 constexpr int TARGET_FPS = 60;
-
-constexpr int WORLD_WIDTH = 7000;
+constexpr int WORLD_WIDTH = 10000;
 constexpr int WORLD_HEIGHT = 7000;
-
 constexpr const char* HIGHSCORE_FILE = "highscore.dat";
+constexpr int MAX_ENEMIES = 50;
 
 #endif // COMMON_H
