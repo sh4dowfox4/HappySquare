@@ -3,7 +3,7 @@
 mkdir -p build
 cd build
 
-echo "Сборка..."
+echo "Building..."
 cmake ..
 make
 
