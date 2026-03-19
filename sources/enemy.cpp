@@ -2,13 +2,15 @@
 #include "player.h"
 #include "game.h"
 
+extern bool g_debugMode;
+
 Enemy::Enemy(Vector2 p, float w, float h, int hp, int dmg, float spd,
              float alertRad, float chaseRad, Behavior beh)
     : Entity(p, w, h, hp, (beh == Behavior::RANGER) ? YELLOW : MAROON) {
     damage = dmg;
     speed = spd;
-    attackCD = 1.f;
-    attackTimer = 0;
+    attackCD = 1.0f;
+    attackTimer = 0.0f;
     behavior = beh;
     alertRadius = alertRad;
     chaseRadius = chaseRad;
@@ -21,7 +23,7 @@ Enemy::Enemy(Vector2 p, float w, float h, int hp, int dmg, float spd,
         shootTimer = 0.3f;
         reloadDelay = 0.5f;
         reloadTime = 0.3f;
-        reloadTimer = 0.f;
+        reloadTimer = 0.0f;
         isReloading = false;
     }
 }
@@ -36,27 +38,30 @@ bool Enemy::canDetectPlayer(const Player& player) const {
 }
 
 void Enemy::update(float deltaTime, const Player& player) {
-    if (attackTimer > 0) attackTimer -= deltaTime;
-    if (shootTimer > 0) shootTimer -= deltaTime;
-    if (reloadTimer > 0) reloadTimer -= deltaTime;
+    if (attackTimer > 0) {
+        attackTimer -= deltaTime;
+    }
+    if (shootTimer > 0) {
+        shootTimer -= deltaTime;
+    }
+    if (reloadTimer > 0) {
+        reloadTimer -= deltaTime;
+    }
 
     if (canDetectPlayer(player)) {
         state = State::ALERTED;
-
         if (behavior == Behavior::CHASE) {
             chasePlayer(player, deltaTime);
-        }
-        else if (behavior == Behavior::RANGER) {
+        } else if (behavior == Behavior::RANGER) {
             float distance = Vector2Distance(pos, player.getPosition());
             if (distance > chaseRadius * 0.7f) {
                 chasePlayer(player, deltaTime);
-            }
-            else if (distance < chaseRadius * 0.3f) {
+            } else if (distance < chaseRadius * 0.3f) {
                 Vector2 away = {
                     pos.x - player.getPosition().x,
                     pos.y - player.getPosition().y
                 };
-                float len = sqrt(away.x * away.x + away.y * away.y);
+                float len = std::sqrt(away.x * away.x + away.y * away.y);
                 if (len > 0) {
                     away.x /= len;
                     away.y /= len;
@@ -86,7 +91,8 @@ void Enemy::chasePlayer(const Player& player, float deltaTime) {
         player.getPosition().x - pos.x,
         player.getPosition().y - pos.y
     };
-    float length = sqrt(toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y);
+
+    float length = std::sqrt(toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y);
     if (length > 0) {
         toPlayer.x /= length;
         toPlayer.y /= length;
@@ -107,10 +113,15 @@ bool Enemy::attack(Player& player) {
 }
 
 bool Enemy::shoot(std::vector<Bullet>& bullets, const Player& player, Sound& shootSfx) {
-    if (behavior != Behavior::RANGER) return false;
-    if (isReloading) return false;
-    if (shootTimer > 0) return false;
-
+    if (behavior != Behavior::RANGER) {
+        return false;
+    }
+    if (isReloading) {
+        return false;
+    }
+    if (shootTimer > 0) {
+        return false;
+    }
     if (currentAmmo <= 0) {
         isReloading = true;
         reloadTimer = reloadDelay;
@@ -123,7 +134,8 @@ bool Enemy::shoot(std::vector<Bullet>& bullets, const Player& player, Sound& sho
             player.getPosition().x + player.getBounds().width / 2 - center.x,
             player.getPosition().y + player.getBounds().height / 2 - center.y
         };
-        float length = sqrt(toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y);
+
+        float length = std::sqrt(toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y);
         if (length > 0) {
             toPlayer.x /= length;
             toPlayer.y /= length;
@@ -134,7 +146,7 @@ bool Enemy::shoot(std::vector<Bullet>& bullets, const Player& player, Sound& sho
             pos.y + height / 2 - 4
         };
 
-        bullets.emplace_back(bulletPos, toPlayer, 400.f, damage, 3.f, BulletOwner::ENEMY);
+        bullets.emplace_back(bulletPos, toPlayer, 400.0f, damage, 3.0f, BulletOwner::ENEMY);
         currentAmmo--;
         shootTimer = shootCD;
         PlaySound(shootSfx);
@@ -146,6 +158,7 @@ bool Enemy::shoot(std::vector<Bullet>& bullets, const Player& player, Sound& sho
 
         return true;
     }
+
     return false;
 }
 
@@ -160,11 +173,10 @@ void Enemy::draw() const {
     float hpPercent = (float)health / maxHealth;
     DrawRectangle(pos.x, pos.y - 8, width * hpPercent, 4, GREEN);
 
-    // 🔧 Радиусы только в debug режиме
     if (g_debugMode) {
-        DrawCircleLines(pos.x + width/2, pos.y + height/2, alertRadius, WHITE);
+        DrawCircleLines(pos.x + width / 2, pos.y + height / 2, alertRadius, WHITE);
         if (state == State::ALERTED) {
-            DrawCircleLines(pos.x + width/2, pos.y + height/2, chaseRadius,
+            DrawCircleLines(pos.x + width / 2, pos.y + height / 2, chaseRadius,
                            (behavior == Behavior::RANGER) ? YELLOW : RED);
         }
     }
