@@ -185,7 +185,6 @@ void Game::drawGameplay() {
     DrawText(TextFormat("Score: %d", score), 10, 40, 20, COLOR_WHITE);
     DrawText(TextFormat("Wave: %d", wave), 10, 70, 20, COLOR_WHITE);
     DrawText(TextFormat("Enemies: %d/%d", (int)enemies.size(), MAX_ENEMIES), 10, 100, 20, COLOR_YELLOW);
-    DrawText("ESC - Pause", 10, 130, 20, GRAY);
 
     // Кнопка настроек в игре
     Rectangle btnSettingsInGame = { (float)GetScreenWidth() - 160, 10, 150, 40 };
@@ -220,6 +219,7 @@ void Game::checkCollision() {
 
 void Game::spawnEnemy() {
     if (enemies.size() >= MAX_ENEMIES) return;
+
     float x = (float)GetRandomValue(0, WORLD_WIDTH - 32);
     float y = (float)GetRandomValue(0, WORLD_HEIGHT - 32);
 	Vector2 pos = {x, y};
@@ -234,12 +234,15 @@ void Game::spawnEnemy() {
         enemySpawnInterval = fmaxf(0.5f, enemySpawnInterval - 0.1f);
     }
 }
-
 void Game::cleanUp() {
-    bullets.erase(std::remove_if(bullets.begin(), bullets.end(), [](const Bullet& b) { return !b.getIsActive() || b.isOffScreen(); }), bullets.end());
-    enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](const Enemy& e) { return !e.getIsActive(); }), enemies.end());
-}
+    bullets.erase(std::remove_if(bullets.begin(), bullets.end(), [](const Bullet& b) {
+		return !b.getIsActive() || b.isOffScreen(); 
+	}), bullets.end());
 
+    enemies.erase(std::remove_if(enemies.begin(), enemies.end(), [](const Enemy& e) {
+		return !e.getIsActive(); 
+	}), enemies.end());
+}
 // ================= МЕНЮ =================
 
 void Game::updateMenu(float deltaTime) {
@@ -354,29 +357,33 @@ void Game::updateSettings(float deltaTime) {
     }
 
     Rectangle rectRes = { (float)sw/2 - 150, 150, 300, 40 };
-    if (CheckCollisionPointRec(GetMousePosition(), rectRes) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        currentResIndex = (currentResIndex + 1) % resolutions.size();
-        applyResolution(currentResIndex, currentMonitorIndex);
+    if (CheckCollisionPointRec(GetMousePosition(), rectRes) && 
+		IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        	currentResIndex = (currentResIndex + 1) % resolutions.size();
+        	applyResolution(currentResIndex, currentMonitorIndex);
     }
 
     int monitorCount = GetMonitorCount();
 
     Rectangle rectMon = { (float)sw/2 - 150, 220, 300, 40 };
-    if (monitorCount > 1) {
-        if (CheckCollisionPointRec(GetMousePosition(), rectMon) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            currentMonitorIndex = (currentMonitorIndex + 1) % monitorCount;
-            applyResolution(currentResIndex, currentMonitorIndex);
+	if (monitorCount > 1) {
+        if (CheckCollisionPointRec(GetMousePosition(), rectMon) &&
+			IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            	currentMonitorIndex = (currentMonitorIndex + 1) % monitorCount;
+            	applyResolution(currentResIndex, currentMonitorIndex);
         }
     }
 
     Rectangle rectMusic = { (float)sw/2 - 100, 360, 200, 20 };
-    if (CheckCollisionPointRec(GetMousePosition(), rectMusic) && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-        musicVolume = Clamp((GetMousePosition().x - rectMusic.x) / rectMusic.width, 0.0f, 1.0f);
+    if (CheckCollisionPointRec(GetMousePosition(), rectMusic) &&
+		IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+        	musicVolume = Clamp((GetMousePosition().x - rectMusic.x) / rectMusic.width, 0.0f, 1.0f);
     }
 
     Rectangle rectSfx = { (float)sw/2 - 100, 420, 200, 20 };
-    if (CheckCollisionPointRec(GetMousePosition(), rectSfx) && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-        sfxVolume = Clamp((GetMousePosition().x - rectSfx.x) / rectSfx.width, 0.0f, 1.0f);
+    if (CheckCollisionPointRec(GetMousePosition(), rectSfx) && 
+		IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+        	sfxVolume = Clamp((GetMousePosition().x - rectSfx.x) / rectSfx.width, 0.0f, 1.0f);
     }
 }
 
