@@ -3,3 +3,7 @@
 # HappySquare Game writen on C++ with raylib.
 
 Game available on Linux and Windows platforms
+
+to compile on Linux run build.sh
+
+to compile on Windows run build.bat
