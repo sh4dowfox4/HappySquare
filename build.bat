@@ -7,7 +7,7 @@ echo Building...
 cmake .. -G "MinGW Makefiles"
 mingw32-make
 
-copy HappySquare.exe ..\game.exe
+copy HappySquare.exe ..\HappySquare.exe
 cd ..
 
 echo Сборка завершена успешно!
