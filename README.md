@@ -27,6 +27,7 @@ chmod +x build.sh
 ```
 
 ## ♿ Windows
+##### ! Нужен компилятор MinGW !
 #### Клонируйте репозиторий
 ```batch
 git clone https://github.com/sh4dowfox4/HappySquare.git
