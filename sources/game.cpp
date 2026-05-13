@@ -81,12 +81,12 @@ void Game::initAudio() {
     musicMenu.looping = true;
     musicGame.looping = true;
 
-    sfxShoot = LoadSound("resources/shoot.wav");
+    sfxShoot = LoadSound("resources/playerShoot.wav");
     sfxHit = LoadSound("resources/hit.wav");
     sfxKill = LoadSound("resources/kill.wav");
     sfxPlayerHit = LoadSound("resources/player_hit.wav");
     sfxReload = LoadSound("resources/reload.wav");
-    sfxEnemyShoot = LoadSound("resources/shoot.wav");
+    sfxEnemyShoot = LoadSound("resources/enemyShoot.wav");
 
     SetMusicVolume(musicMenu, musicVolume);
     SetMusicVolume(musicGame, musicVolume);
